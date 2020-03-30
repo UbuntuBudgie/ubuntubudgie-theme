@@ -1,11 +1,30 @@
 <h1 align="center">
   <img src="https://avatars1.githubusercontent.com/u/29598503?v=3&s=256" alt="[Project]">
   <br />
-  [Project]
+  [ubuntubudgie-theme]
 </h1>
 
-<p align="center"><b>This is the snap for [Project]</b>, <i>“Single-line elevator pitch for your amazing snap”</i>. It works on Ubuntu, Fedora, Debian, and other major Linux
-distributions.</p>
+<p align="center"><b>This is the snap for [ubuntubudgie-theme]</b>, <i>"An adaptive Gtk+ theme based on Material Design Guidelines."</i>. It works on Ubuntu, Fedora, Debian, and other major Linux
+distributions.
+
+This snap contains multiple packages that are recommended for using the
+adapta theme in snaps. This includes roboto and noto sans fonts. These are
+the same fonts that are recommended when installing adapta-gtk-theme.
+
+In addition, this snap contains the papirus icon pack as this package
+contains useful adapta specific icons.
+
+This snap provides both Adapta and Adapta-Nokto themes. To see how to
+connect this snap to other packages please see the README in the source
+repository for the snap.
+
+Attributions:
+This snap is packaged from Tista500's <a href="https://github.com/adapta-project/adapta-gtk-theme">adapta-gtk-theme</a>. The theme is under a GPL2.0 licence.
+This theme makes use of icons created by Sam Hewitt which are licensed under CC-SA-4.0.
+
+Similarly, <a href="https://github.com/PapirusDevelopmentTeam/papirus-icon-theme">papirus icon themes</a> are provided by the Papirus team. It is under a GPL3.0 licence.
+
+</p>
 
 <!-- Uncomment and modify this when you are provided a build status badge
 <p align="center">
@@ -21,7 +40,27 @@ distributions.</p>
 
 ## Install
 
-    sudo snap install my-snap-name
+To install, simply run snapcraft to build the snap
+
+sudo snap install ubuntubudgie-theme-snap --edge
+
+To connect the theme to an app simply run
+
+    sudo snap connect [other snap]:gtk-3-themes ubuntubudgie-theme-snap:gtk-3-themes
+    sudo snap connect [other snap]:icon-themes ubuntubudgie-theme-snap:icon-themes
+
+Similarly, you need to specify which theme you want to use as an environment
+variable, preferrably in your ~/.bashrc file. To do so simply add the following
+lines to your bashrc file.
+
+GTK_THEME=Pocillo
+export GTK_THEME
+
+The theme should now apply by default to themes that are connected.
+NOTE: the gtk-3-themes plug isn't exposed for all snaps so this won't apply
+to all available snaps. I have only tested this on Thunderbird and LibreOffice.
+
+([Don't have snapd installed?](https://snapcraft.io/docs/core/install))
 
 <!-- Uncomment and modify this when your snap is available on the store
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-white.svg)](https://snapcraft.io/my-snap-name)
@@ -34,7 +73,7 @@ distributions.</p>
 ![my-snap-name](screenshot.png?raw=true "my-snap-name")
 -->
 
-Snapcrafters ([join us](https://forum.snapcraft.io/t/join-snapcrafters/1325)) 
+Snapcrafters ([join us](https://forum.snapcraft.io/t/join-snapcrafters/1325))
 are working to land snap install documentation and
 the [snapcraft.yaml](https://github.com/snapcrafters/fork-and-rename-me/blob/master/snap/snapcraft.yaml)
 upstream so [Project] can authoritatively publish future releases.
@@ -61,7 +100,7 @@ upstream so [Project] can authoritatively publish future releases.
   - [ ] Post an announcement in the [Snapcraft Forum](https://forum.snapcraft.io) - [link]()
   - [ ] Submit a pull request or patch upstream that adds snap install documentation - [link]()
   - [ ] Submit a pull request or patch upstream that adds the `snapcraft.yaml` and any required assets/launchers - [link]()
-  - [ ] Add upstream contact information to the `README.md`  
+  - [ ] Add upstream contact information to the `README.md`
   - If upstream accept the PR:
     - [ ] Request upstream create a Snap store account
     - [ ] Contact the Snap Advocacy team to request the snap be transferred to upstream
@@ -75,7 +114,7 @@ If you have any questions, [post in the Snapcraft forum](https://forum.snapcraft
 | [![Your Name](https://gravatar.com/avatar/bc0bced65e963eb5c3a16cab8b004431/?s=128)](https://github.com/yourname/) |
 | :---: |
 | [Your Name](https://github.com/yourname/) |
---> 
+-->
 
 <!-- Uncomment and modify this when you have upstream contacts
 ## Upstream

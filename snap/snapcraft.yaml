@@ -1,15 +1,87 @@
-name: my-snap-name # you probably want to 'snapcraft register <name>'
-version: '0.1' # just for humans, typically '1.2+git' or '1.3.2'
-summary: Single-line elevator pitch for your amazing snap # 79 char long summary
-description: |
-  This is my-snap's description. You have a paragraph or two to tell the
-  most important story about your snap. Keep it under 100 words though,
-  we live in tweetspace and your description wants to look good in the snap
-  store.
+name: ubuntubudgie-theme-snap
+version: '0.1'
+architectures:
+  - all
+summary: "UbuntuBudgie-Theme: Themes and icons for the budgie desktop."
+description: '
+  This snap contains multiple packages that are recommended for using the
+  ubuntu budgie theme in snaps. This includes xxxxx and yyyy fonts. These are
+  the same fonts that are recommended when installing ubuntubudgie-theme.
 
-confinement: devmode # use 'strict' once you have the right plugs and slots
+  In addition, this snap contains the pocillo icon pack as this package
+  contains useful pocillo specific icons.
+
+  This snap provides all the Pocillo themes. To see how to
+  connect this snap to other packages please see the README in the source
+  repository for the snap.
+
+  Attribution
+  This snap is packaged by the ubuntu budgie team pocillo-gtk-theme. It is licenced under a xxxx licence
+  and can be found here.
+    https://github.com/ubuntubudgie/pocillo-gtk-theme
+
+  Similarly, pocillo icon themes are provided by the Ubuntu Budgie team. It is under a xxxx licence.
+    https://github.com/ubuntubudgie/pocillo-icon-theme'
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: strict
+base: core18
+
+slots:
+  gtk-2-themes:
+    interface: content
+    source:
+      read:
+        - $SNAP/share/gtk2/Pocillo
+        - $SNAP/share/gtk2/Pocillo-slim
+        - $SNAP/share/gtk2/Pocillo-dark
+        - $SNAP/share/gtk2/Pocillo-dark-slim
+        - $SNAP/share/gtk2/Pocillo-light
+        - $SNAP/share/gtk2/Pocillo-light-slim
+  gtk-3-themes:
+    interface: content
+    source:
+      read:
+        - $SNAP/share/themes/Pocillo
+        - $SNAP/share/themes/Pocillo-slim
+        - $SNAP/share/themes/Pocillo-dark
+        - $SNAP/share/themes/Pocillo-dark-slim
+        - $SNAP/share/themes/Pocillo-light
+        - $SNAP/share/themes/Pocillo-light-slim
+  icon-themes:
+    interface: content
+    source:
+      read:
+        - $SNAP/share/icons/Pocillo
+        - $SNAP/share/icons/Moka
+        - $SNAP/share/icons/Faba
 
 parts:
-  my-part:
-    # See 'snapcraft plugins'
+  pocillo-theme:
+    after: [utils]
     plugin: nil
+    stage-packages:
+      - ubuntu-budgie-themes
+      - pocillo-icon-theme
+    build-packages:
+      - gtk-update-icon-cache
+    override-build: |
+      snapcraftctl build
+      $SNAPCRAFT_STAGE/update-icon-cache.sh $SNAPCRAFT_PART_INSTALL/usr/share/icons
+      $SNAPCRAFT_STAGE/split-gtk-theme.sh $SNAPCRAFT_PART_INSTALL/usr/share
+      mv  $SNAPCRAFT_PART_INSTALL/usr/share $SNAPCRAFT_PART_INSTALL/share
+    stage:
+      - share/icons/Pocillo
+      - share/icons/Moka
+      - share/icons/Faba
+      - share/themes/*/gtk-3*
+      - share/gtk2/*/gtk-2.0
+
+  utils:
+    plugin: dump
+    source: utils
+    prime:
+      - -*
+    build-packages:
+      - try: [gtk-update-icon-cache]
+      - else: [libgtk-3-bin]
