@@ -54,28 +54,70 @@ slots:
       read:
         - $SNAP/share/icons/Pocillo
         - $SNAP/share/icons/Moka
-        - $SNAP/share/icons/Faba
 
 parts:
-  pocillo-theme:
+  pocillo-icon-theme:
     after: [utils]
-    plugin: nil
-    stage-packages:
-      - ubuntu-budgie-themes
-      - pocillo-icon-theme
-    build-packages:
-      - gtk-update-icon-cache
+    plugin: dump
+    source: http://de.archive.ubuntu.com/ubuntu/pool/universe/b/budgie-artwork/pocillo-icon-theme_0.12.3_all.deb
     override-build: |
       snapcraftctl build
-      $SNAPCRAFT_STAGE/update-icon-cache.sh $SNAPCRAFT_PART_INSTALL/usr/share/icons
-      $SNAPCRAFT_STAGE/split-gtk-theme.sh $SNAPCRAFT_PART_INSTALL/usr/share
-      mv  $SNAPCRAFT_PART_INSTALL/usr/share $SNAPCRAFT_PART_INSTALL/share
+      # Don't include app and panel icons to reduce size as they aren't
+      # generally useful in the snap. If an app does attempt to display
+      # another app's icon by it's name that could be an issue, however
+      # that's a corner case.
+      find $SNAPCRAFT_PART_INSTALL/usr/share/icons -name apps | xargs rm -rf
+      find $SNAPCRAFT_PART_INSTALL/usr/share/icons -name panel | xargs rm -rf
+      for dir in $SNAPCRAFT_PART_INSTALL/usr/share/icons/*/; do
+        if [ -f $dir/index.theme ]; then
+          gtk-update-icon-cache -q $dir
+        fi
+      done
+
+      mkdir -p $SNAPCRAFT_PART_INSTALL/share/icons
+      mv $SNAPCRAFT_PART_INSTALL/usr/share/icons/* $SNAPCRAFT_PART_INSTALL/share/icons/
+      $SNAPCRAFT_STAGE/update-icon-cache.sh $SNAPCRAFT_PART_INSTALL/share/icons
     stage:
       - share/icons/Pocillo
+
+  moka-icon-theme:
+    after: [utils]
+    plugin: dump
+    source: http://de.archive.ubuntu.com/ubuntu/pool/universe/m/moka-icon-theme/moka-icon-theme_5.4.0.1-1_all.deb
+    override-build: |
+      snapcraftctl build
+      # Don't include app and panel icons to reduce size as they aren't
+      # generally useful in the snap. If an app does attempt to display
+      # another app's icon by it's name that could be an issue, however
+      # that's a corner case.
+      find $SNAPCRAFT_PART_INSTALL/usr/share/icons -name apps | xargs rm -rf
+      find $SNAPCRAFT_PART_INSTALL/usr/share/icons -name panel | xargs rm -rf
+      for dir in $SNAPCRAFT_PART_INSTALL/usr/share/icons/*/; do
+        if [ -f $dir/index.theme ]; then
+          gtk-update-icon-cache -q $dir
+        fi
+      done
+
+      mkdir -p $SNAPCRAFT_PART_INSTALL/share/icons
+      mv $SNAPCRAFT_PART_INSTALL/usr/share/icons/* $SNAPCRAFT_PART_INSTALL/share/icons/
+      $SNAPCRAFT_STAGE/update-icon-cache.sh $SNAPCRAFT_PART_INSTALL/share/icons
+    stage:
       - share/icons/Moka
-      - share/icons/Faba
-      - share/themes/*/gtk-3*
+
+  pocillo-gtk-theme:
+    after: [utils]
+    plugin: dump
+    source: http://de.archive.ubuntu.com/ubuntu/pool/universe/b/budgie-artwork/ubuntu-budgie-themes_0.12.3_all.deb
+    override-build: |
+      snapcraftctl build
+      rm -rf $SNAPCRAFT_PART_INSTALL/usr/share/themes/Qogir*
+
+      mkdir -p $SNAPCRAFT_PART_INSTALL/share/themes
+      mv $SNAPCRAFT_PART_INSTALL/usr/share/themes/* $SNAPCRAFT_PART_INSTALL/share/themes/
+      $SNAPCRAFT_STAGE/split-gtk-theme.sh $SNAPCRAFT_PART_INSTALL
+    stage:
       - share/gtk2/*/gtk-2.0
+      - share/themes/*/gtk-3*
 
   utils:
     plugin: dump
